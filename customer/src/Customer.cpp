@@ -73,6 +73,28 @@ namespace Banking
         }
         return *this;
     }
+    /*
+    
+    Customer::Customer(Customer&& other) noexcept
+        : id(other.id), name(std::move(other.name)), address(std::move(other.address)), phoneNumber(std::move(other.phoneNumber)), email(std::move(other.email))
+    {
+        other.id = 0;
+    }   
+    Customer& Customer::operator=(Customer&& other) noexcept
+    {
+        if (this != &other)
+        {
+            id = other.id;
+            name = std::move(other.name);
+            address = std::move(other.address);
+            phoneNumber = std::move(other.phoneNumber);
+            email = std::move(other.email);
+
+            other.id = 0;
+        }
+        return *this;
+    }   
+        */
     //print customer info
     void Customer::printInfo() const
     {

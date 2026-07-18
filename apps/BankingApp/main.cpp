@@ -14,7 +14,7 @@ int main()
     Banking::Customer customer(customerId, "John Doe", "123 Main St", "555-1234", "john.doe@example.com");
     std::vector<Banking::Customer> customers;
     customers.push_back(customer);
-    //customers[0].printInfo();
+    customers[0].printInfo();
 
     return 0;
 }

@@ -28,8 +28,17 @@ namespace Banking
             Customer(const Customer& other);
             Customer& operator=(const Customer& other);
             ~Customer();
-            Customer(Customer&& other) noexcept;
-            Customer& operator=(Customer&& other) noexcept;
+            /*
+                as per Rule of 0, we dont need to implement move constructor and move assignment operator since we are not 
+                managing any resources manually. The compiler will generate them for us.
+                when we need to implement them,
+                we can implement them as follows:
+                1.  When we have a class that manages resources (like dynamic memory, file handles, etc.), we need to implement move constructor and move assignment operator to efficiently transfer ownership of those resources from one object to another.
+                2.  When we have a class that has a base class with a move constructor or move assignment operator, we need to implement move constructor and move assignment operator in the derived class to ensure that the base class's resources
+
+            */
+            //Customer(Customer&& other) noexcept;
+           // Customer& operator=(Customer&& other) noexcept;
             void printInfo() const;
             Customer(){};
 
