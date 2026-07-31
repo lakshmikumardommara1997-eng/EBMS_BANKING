@@ -35,7 +35,7 @@ bool Banking::LogWriter::isOpen() const
 {
     return logFile.is_open();
 }
-void Banking::LogWriter::makedirectory(const std::string& path)
+void Banking::LogWriter::makedirectory(const std::string& path) 
 {
     std::cout << "Creating directory: " << path << std::endl;
     std::cout << "Path exists: " << std::filesystem::exists(path) << std::endl;

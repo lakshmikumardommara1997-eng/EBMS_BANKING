@@ -44,16 +44,9 @@ void Banking::Logger::info(const std::string& message,const std::string& file, i
         std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[INFO] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
     }
     if (AppConfig::getInstance().isLogToFile()&& AppConfig::getInstance().getLogLevel() == "INFO") {
-        std::lock_guard<std::mutex> lock(loggerMutex); // Lock the mutex for thread safety
-        LogWriter logWriter;
-        logWriter.makedirectory(AppConfig::getInstance().getLogFilePath().substr(0, AppConfig::getInstance().getLogFilePath().find_last_of("/")));
-        if (logWriter.open(AppConfig::getInstance().getLogFilePath())) {
-            logWriter.write("[" + SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat()) + "]" + "[INFO] " + message + " (" + file + ":" + std::to_string(line) + " in " + function + ")");
-            logWriter.flush();
-            logWriter.close();
-        } else {
-            std::cerr << "Failed to open log file: " << AppConfig::getInstance().getLogFilePath() << std::endl;
-        }
+        std::lock_guard<std::mutex> lock(loggerMutex); // Lock the mutex to ensure thread safety
+        logWriter.write("[" + SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat()) + "]" + "[INFO] " + message + " (" + file + ":" + std::to_string(line) + " in " + function + ")");
+        
         // Unlock the mutex after writing to the log file
     }
    // std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[INFO] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
@@ -82,8 +75,21 @@ void Banking::Logger::debug(const std::string& message,const std::string& file, 
     // Implement debug level logging
     std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[DEBUG] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
 }
+void Banking::Logger::init()
+{
+    auto& appConfig = AppConfig::getInstance();
+    if (appConfig.isLoggingDisabled()) {
+        return; // Skip initialization if logging is disabled
+    }
+   logWriter.makedirectory(appConfig.getLogFilePath().substr(0, appConfig.getLogFilePath().find_last_of("/")));
+   if (!logWriter.open(appConfig.getLogFilePath())) {
+        std::cerr << "Failed to open log file: " << appConfig.getLogFilePath() << std::endl;
+    }
+}
 Banking::Logger::~Logger()
 
 {
     // Cleanup resources if needed
+    logWriter.close();
+    logWriter.flush();
 }

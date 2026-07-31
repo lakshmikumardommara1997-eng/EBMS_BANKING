@@ -3,6 +3,7 @@
 #include <string>
 #include "systemtime.h"
 #include "appconfig.h"
+#include "Logwritter.h"
 namespace Banking
 {
   
@@ -14,18 +15,10 @@ namespace Banking
         Logger& operator=(const Logger&) = delete; // Delete copy assignment operator
         Logger(Logger&&) = delete; // Delete move constructor
         Logger& operator=(Logger&&) = delete; // Delete move assignment operator
-        struct LoggerConfig
-        {
-            std::string logFilePath;
-            std::string logLevel;
-            std::string logFormat;
-            bool logToConsole;
-            bool logToFile;
-            bool disableLogging;
-        };
+        Banking::LogWriter logWriter;
         public:
         static Logger& getInstance();
-        void init(const AppConfig& config);
+        void init() ;
 
         void log(const std::string& message,const std::string& file, int line, const std::string& function, const std::string& level);
         void info(const std::string& message,const std::string& file, int line, const std::string& function);

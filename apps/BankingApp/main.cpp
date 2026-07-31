@@ -22,7 +22,7 @@ int main()
     appConfig.setLoggingDisabled(false); // Disable logging for testing purposes
     appConfig.setSysDateTimeFormat("%d-%m-%Y %H:%M:%S");
     Banking::Logger& logger = Banking::Logger::getInstance();
-    
+    Banking::Logger::getInstance().init();
     logger.info("Starting Banking Application", __FILE__, __LINE__, __FUNCTION__);
     logger.info("Application Configuration: " + appConfig.toString(), __FILE__, __LINE__, __FUNCTION__);
     common.printWelcome();
