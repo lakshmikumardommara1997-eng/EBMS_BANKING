@@ -2,8 +2,11 @@
 #include <iostream>
 #include <fstream>
 #include "Logwritter.h"
+#include <mutex>
 
- Banking::Logger& Banking::Logger::getInstance()
+static std::mutex loggerMutex;
+
+Banking::Logger& Banking::Logger::getInstance()
 {
     static Logger instance;
     return instance;
@@ -40,7 +43,8 @@ void Banking::Logger::info(const std::string& message,const std::string& file, i
     if (AppConfig::getInstance().isLogToConsole()) {
         std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[INFO] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
     }
-    if (AppConfig::getInstance().isLogToFile()) {
+    if (AppConfig::getInstance().isLogToFile()&& AppConfig::getInstance().getLogLevel() == "INFO") {
+        std::lock_guard<std::mutex> lock(loggerMutex); // Lock the mutex for thread safety
         LogWriter logWriter;
         logWriter.makedirectory(AppConfig::getInstance().getLogFilePath().substr(0, AppConfig::getInstance().getLogFilePath().find_last_of("/")));
         if (logWriter.open(AppConfig::getInstance().getLogFilePath())) {
@@ -50,6 +54,7 @@ void Banking::Logger::info(const std::string& message,const std::string& file, i
         } else {
             std::cerr << "Failed to open log file: " << AppConfig::getInstance().getLogFilePath() << std::endl;
         }
+        // Unlock the mutex after writing to the log file
     }
    // std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[INFO] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
 }
