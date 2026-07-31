@@ -17,17 +17,19 @@ namespace Banking
         Logger(Logger&&) = delete; // Delete move constructor
         Logger& operator=(Logger&&) = delete; // Delete move assignment operator
         Banking::LogWriter logWriter;
-        
+        const Banking::AppConfig& appConfig = Banking::AppConfig::getInstance();
+        Banking::SystemTime systemTime;
         std::mutex loggerMutex;
         public:
         static Logger& getInstance();
         void init() ;
 
-        void log(const std::string& message,const std::string& file, int line, const std::string& function, const std::string& level);
+        void log(const std::string& message,const std::string& file, int line, const std::string& function, Banking::LogLevel level);
         void info(const std::string& message,const std::string& file, int line, const std::string& function);
         void warn(const std::string& message,const std::string& file, int line, const std::string& function);
         void error(const std::string& message,const std::string& file, int line, const std::string& function);
         void debug(const std::string& message,const std::string& file, int line, const std::string& function);
+        bool shouldLog(Banking::LogLevel messageLevel) const;
 
         ~Logger();
     };

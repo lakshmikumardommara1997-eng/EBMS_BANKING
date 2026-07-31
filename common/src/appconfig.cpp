@@ -18,7 +18,7 @@ void Banking::AppConfig::setLogFilePath(const std::string& logFilePath)
 }
 void Banking::AppConfig::setLogLevel(const std::string& logLevel)
 {
-    LOG_LEVEL = logLevel;
+    LOG_LEVEL = stringToLogLevel(logLevel);
 }
 void Banking::AppConfig::setLogFormat(const std::string& logFormat)
 {
@@ -52,7 +52,7 @@ std::string Banking::AppConfig::getLogFilePath() const
 {
     return LOG_FILE_PATH;
 }
-std::string Banking::AppConfig::getLogLevel() const
+Banking::LogLevel Banking::AppConfig::getLogLevel() const
 {
     return LOG_LEVEL;
 }
@@ -85,7 +85,7 @@ std::string Banking::AppConfig::toString() const
 {
     return "AppConfig [APP_NAME=" + APP_NAME + ", APP_VERSION=" + APP_VERSION +
            ", CONFIG_FILE_PATH=" + CONFIG_FILE_PATH + ", LOG_FILE_PATH=" + LOG_FILE_PATH +
-           ", LOG_LEVEL=" + LOG_LEVEL + ", LOG_FORMAT=" + LOG_FORMAT +
+           ", LOG_LEVEL=" + logLevelToString(LOG_LEVEL) + ", LOG_FORMAT=" + LOG_FORMAT +
            ", LOG_TO_CONSOLE=" + (LOG_TO_CONSOLE ? "true" : "false") +
            ", LOG_TO_FILE=" + (LOG_TO_FILE ? "true" : "false") +
            ", DISABLE_LOGGING=" + (DISABLE_LOGGING ? "true" : "false") + ", SYSDATE_TIME_FORMAT=" + SYSDATE_TIME_FORMAT + "]";

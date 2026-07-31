@@ -1,6 +1,7 @@
 #ifndef APPCONFIG_H
 #define APPCONFIG_H
 #include <string>
+#include "Loglevel.h"
 namespace Banking
 {
     class AppConfig
@@ -15,7 +16,7 @@ namespace Banking
             std::string APP_VERSION;
             std::string CONFIG_FILE_PATH;
             std::string LOG_FILE_PATH;
-            std::string LOG_LEVEL;
+            Banking::LogLevel LOG_LEVEL;
             std::string LOG_FORMAT;
             std::string SYSDATE_TIME_FORMAT;
             bool LOG_TO_CONSOLE;
@@ -43,7 +44,7 @@ namespace Banking
             std::string getAppVersion() const;
             std::string getConfigFilePath() const;
             std::string getLogFilePath() const;
-            std::string getLogLevel() const;
+            Banking::LogLevel getLogLevel() const;
             std::string getLogFormat() const;
             bool isLogToConsole() const;
             bool isLogToFile() const;

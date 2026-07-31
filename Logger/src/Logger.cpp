@@ -10,72 +10,44 @@ Banking::Logger& Banking::Logger::getInstance()
     return instance;
 }
 
-void Banking::Logger::log(const std::string& message,const std::string& file, int line, const std::string& function, const std::string& level)
+void Banking::Logger::log(const std::string& message,const std::string& file, int line, const std::string& function, Banking::LogLevel level)
 {
-    // Implement logging logic here
-    // For example, write to console or file based on the configuration
-    if (level == "INFO")
-    {
-        info(message, file, line, function);
-    }
-    else if (level == "WARN")
-    {
-        warn(message, file, line, function);
-    }
-    else if (level == "ERROR")
-    {
-        error(message, file, line, function);
-    }
-    else if (level == "DEBUG")
-    {
-        debug(message, file, line, function);
-    }
-}
-void Banking::Logger::info(const std::string& message,const std::string& file, int line, const std::string& function)
-{
-    // Implement info level logging with timing information
-    if (AppConfig::getInstance().isLoggingDisabled() || AppConfig::getInstance().getLogLevel() != "INFO") {
-
+    const auto& timestamp = systemTime.currentDateTime(appConfig.getSysDateTimeFormat());
+    std::string formattedmessage = "[" + timestamp + "]" + "[" + logLevelToString(level) + "] " + message + " (" + file + ":" + std::to_string(line) + " in " + function + ")";
+    if (appConfig.isLoggingDisabled() || (!shouldLog(level))) {
         return; // Skip logging if disabled
     }
-    if (AppConfig::getInstance().isLogToConsole()) {
-        std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[INFO] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
+    if (appConfig.isLogToConsole()) {
+        std::cout << formattedmessage << std::endl;
     }
-    if (AppConfig::getInstance().isLogToFile()&& AppConfig::getInstance().getLogLevel() == "INFO") {
+    if (appConfig.isLogToFile()) {
         std::lock_guard<std::mutex> lock(loggerMutex); // Lock the mutex to ensure thread safety
-        logWriter.write("[" + SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat()) + "]" + "[INFO] " + message + " (" + file + ":" + std::to_string(line) + " in " + function + ")");
+        logWriter.write(formattedmessage);
 
         // Unlock the mutex after writing to the log file
     }
-   // std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[INFO] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
+}
+
+void Banking::Logger::info(const std::string& message,const std::string& file, int line, const std::string& function)
+{
+   log(message, file, line, function, Banking::LogLevel::INFO);
+   
 }
 void Banking::Logger::warn(const std::string& message,const std::string& file, int line, const std::string& function)
 {
-    if (AppConfig::getInstance().isLoggingDisabled() || AppConfig::getInstance().getLogLevel() != "WARN") {
-        return; // Skip logging if disabled
-    }
-    // Implement warn level logging
-    std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[WARN] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
+    log(message, file, line, function, Banking::LogLevel::WARN);
 }
 void Banking::Logger::error(const std::string& message,const std::string& file, int line, const std::string& function)
 {
-    if (AppConfig::getInstance().isLoggingDisabled() || AppConfig::getInstance().getLogLevel() != "ERROR") {
-        return; // Skip logging if disabled
-    }
-    // Implement error level logging
-    std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[ERROR] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
+    log(message, file, line, function, Banking::LogLevel::ERROR);
 }
 void Banking::Logger::debug(const std::string& message,const std::string& file, int line, const std::string& function)
 {
-    if (AppConfig::getInstance().isLoggingDisabled() || AppConfig::getInstance().getLogLevel() != "DEBUG") {
-        return; // Skip logging if disabled
-    }
-    // Implement debug level logging
-    std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[DEBUG] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
+    log(message, file, line, function, Banking::LogLevel::DEBUG);
 }
 void Banking::Logger::init()
 {
-    auto& appConfig = AppConfig::getInstance();
+    
     if (appConfig.isLoggingDisabled()) {
         return; // Skip initialization if logging is disabled
     }
@@ -83,6 +55,16 @@ void Banking::Logger::init()
    if (!logWriter.open(appConfig.getLogFilePath())) {
         std::cerr << "Failed to open log file: " << appConfig.getLogFilePath() << std::endl;
     }
+}
+
+bool Banking::Logger::shouldLog(Banking::LogLevel messageLevel) const
+{
+    auto configuredLevel = appConfig.getLogLevel();
+
+    if (configuredLevel == Banking::LogLevel::NONE)
+        return false;
+
+    return messageLevel >= configuredLevel;
 }
 Banking::Logger::~Logger()
 
