@@ -6,13 +6,25 @@
 #include "Logger.h"
 
 
+
 int main()
 {
     Banking::Common common;
-    Banking::Logger::getInstance().init();
+    Banking::AppConfig& appConfig = Banking::AppConfig::getInstance();
+    appConfig.setAppName("Banking Application");
+    appConfig.setAppVersion("1.0.0");
+    appConfig.setConfigFilePath("config.ini");
+    appConfig.setLogFilePath("/home/lakshmi/c_plus_plus_projects/EBMS_BANKING/logs/banking_app.log");
+    appConfig.setLogLevel("INFO");
+    appConfig.setLogFormat("[%LEVEL%] %MESSAGE%");
+    appConfig.setLogToConsole(true);
+    appConfig.setLogToFile(true);
+    appConfig.setLoggingDisabled(false); // Disable logging for testing purposes
+    appConfig.setSysDateTimeFormat("%d-%m-%Y %H:%M:%S");
     Banking::Logger& logger = Banking::Logger::getInstance();
     
     logger.info("Starting Banking Application", __FILE__, __LINE__, __FUNCTION__);
+    logger.info("Application Configuration: " + appConfig.toString(), __FILE__, __LINE__, __FUNCTION__);
     common.printWelcome();
 
     // Create a new customer

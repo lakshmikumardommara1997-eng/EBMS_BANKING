@@ -17,6 +17,7 @@ namespace Banking
             std::string LOG_FILE_PATH;
             std::string LOG_LEVEL;
             std::string LOG_FORMAT;
+            std::string SYSDATE_TIME_FORMAT;
             bool LOG_TO_CONSOLE;
             bool LOG_TO_FILE;
             bool DISABLE_LOGGING;
@@ -36,6 +37,8 @@ namespace Banking
             void setLogToConsole(bool logToConsole);
             void setLogToFile(bool logToFile);
             void setLoggingDisabled(bool disableLogging);
+            void setSysDateTimeFormat(const std::string& sysDateTimeFormat);
+            std::string getSysDateTimeFormat() const;
             std::string getAppName() const;
             std::string getAppVersion() const;
             std::string getConfigFilePath() const;
@@ -45,6 +48,7 @@ namespace Banking
             bool isLogToConsole() const;
             bool isLogToFile() const;
             bool isLoggingDisabled() const;
+            std::string toString() const;
            
     };
 }

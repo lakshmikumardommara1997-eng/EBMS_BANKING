@@ -2,6 +2,7 @@
 #define LOGGER_H
 #include <string>
 #include "systemtime.h"
+#include "appconfig.h"
 namespace Banking
 {
   
@@ -24,7 +25,7 @@ namespace Banking
         };
         public:
         static Logger& getInstance();
-        void init();
+        void init(const AppConfig& config);
 
         void log(const std::string& message,const std::string& file, int line, const std::string& function, const std::string& level);
         void info(const std::string& message,const std::string& file, int line, const std::string& function);

@@ -1,8 +1,8 @@
 CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -Iinclude -fPIC -I../common/include -I../Logger/include -I../utils/include
 
-SRC = src/Common.cpp
-OBJ = build/Common.o
+SRC = $(wildcard src/*.cpp)
+OBJ = $(patsubst src/%.cpp,build/%.o,$(SRC))
 
 TARGET = ../lib/libCommon.so
 
@@ -15,7 +15,7 @@ create_dirs:
 $(TARGET): $(OBJ)
 	$(CXX) -shared -o $@ $(OBJ)
 
-build/Common.o: src/Common.cpp
+build/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:

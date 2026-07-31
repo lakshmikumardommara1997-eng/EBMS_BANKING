@@ -72,3 +72,21 @@ bool Banking::AppConfig::isLoggingDisabled() const
 {
     return DISABLE_LOGGING;
 }
+void Banking::AppConfig::setSysDateTimeFormat(const std::string& sysDateTimeFormat)
+{
+    SYSDATE_TIME_FORMAT = sysDateTimeFormat;
+}
+std::string Banking::AppConfig::getSysDateTimeFormat() const
+{
+    return SYSDATE_TIME_FORMAT;
+}
+
+std::string Banking::AppConfig::toString() const
+{
+    return "AppConfig [APP_NAME=" + APP_NAME + ", APP_VERSION=" + APP_VERSION +
+           ", CONFIG_FILE_PATH=" + CONFIG_FILE_PATH + ", LOG_FILE_PATH=" + LOG_FILE_PATH +
+           ", LOG_LEVEL=" + LOG_LEVEL + ", LOG_FORMAT=" + LOG_FORMAT +
+           ", LOG_TO_CONSOLE=" + (LOG_TO_CONSOLE ? "true" : "false") +
+           ", LOG_TO_FILE=" + (LOG_TO_FILE ? "true" : "false") +
+           ", DISABLE_LOGGING=" + (DISABLE_LOGGING ? "true" : "false") + ", SYSDATE_TIME_FORMAT=" + SYSDATE_TIME_FORMAT + "]";
+}
