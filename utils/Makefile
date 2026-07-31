@@ -1,10 +1,11 @@
 CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -Iinclude -fPIC
 
-SRC = $(wildcard src/*.cpp)
-OBJ = $(patsubst src/%.cpp,build/%.o,$(SRC))
+SRC = src/*.cpp
+OBJ = build/*.o
 
-TARGET = ../lib/libConstants.so
+
+TARGET = ../lib/libUtils.so
 
 all: create_dirs $(TARGET)
 
@@ -15,8 +16,8 @@ create_dirs:
 $(TARGET): $(OBJ)
 	$(CXX) -shared -o $@ $(OBJ)
 
-build/%.o: src/%.cpp
-	$(CXX) $(CXXFLAGS)  -c $< -o $@
+build/*.o: src/*.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -rf build

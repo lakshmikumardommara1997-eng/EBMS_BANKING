@@ -1,10 +1,10 @@
 CXX = g++
 
-CXXFLAGS = -std=c++20 -Wall -Wextra
+CXXFLAGS = -std=c++20 -Wall -Wextra -g
 
-INCLUDES = -I../../common/include -I../../customer/include
+INCLUDES = -I../../common/include -I../../customer/include -I../../Logger/include -I../../utils/include
 
-LIBS = -L../../lib -lCommon -lCustomer
+LIBS = -L../../lib -lCommon -lCustomer -lLogger -lUtils
 
 TARGET = ../../bin/BankingSystem
 

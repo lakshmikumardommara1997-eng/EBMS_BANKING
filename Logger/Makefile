@@ -1,10 +1,18 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -fPIC -Iinclude  -I../common/include 
+
+CXXFLAGS = -std=c++20 -Wall -Wextra -fPIC
+
+INCLUDES = \
+-Iinclude \
+-I../common/include \
+-I../customer/include \
+-I../utils/include
 
 SRC = $(wildcard src/*.cpp)
+
 OBJ = $(patsubst src/%.cpp,build/%.o,$(SRC))
 
-TARGET = ../lib/libCustomer.so
+TARGET = ../lib/libLogger.so
 
 all: create_dirs $(TARGET)
 
@@ -16,8 +24,11 @@ $(TARGET): $(OBJ)
 	$(CXX) -shared -o $@ $(OBJ)
 
 build/%.o: src/%.cpp
-	$(CXX) $(CXXFLAGS)  -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	rm -rf build
 	rm -f $(TARGET)
+print:
+	@echo $(INCLUDES)
+	@pwd
