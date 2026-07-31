@@ -20,7 +20,7 @@ int main()
     Banking::Customer customer(customerId, "John Doe", "123 Main St", "555-1234", "john.doe@example.com");
     std::vector<std::unique_ptr<Banking::Customer>> customers;
     customers.push_back(std::make_unique<Banking::Customer>(customer));
-    customers[0]->printInfo();
-
+    //customers[0]->printInfo();
+    logger.info("Customer created: " + customers[0]->toString(), __FILE__, __LINE__, __FUNCTION__);
     return 0;
 }

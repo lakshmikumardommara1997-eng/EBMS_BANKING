@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -Iinclude -fPIC
+CXXFLAGS = -std=c++20 -Wall -Wextra -Iinclude -fPIC -I../common/include -I../Logger/include -I../utils/include
 
 SRC = src/Common.cpp
 OBJ = build/Common.o

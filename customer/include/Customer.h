@@ -40,6 +40,7 @@ namespace Banking
             //Customer(Customer&& other) noexcept;
            // Customer& operator=(Customer&& other) noexcept;
             void printInfo() const;
+            std::string toString() const;
             Customer(){};
 
     };

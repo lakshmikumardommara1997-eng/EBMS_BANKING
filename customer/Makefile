@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -fPIC -Iinclude  -I../common/include 
+CXXFLAGS = -std=c++20 -Wall -Wextra -fPIC -Iinclude  -I../common/include -I../Logger/include -I../utils/include
 
 SRC = $(wildcard src/*.cpp)
 OBJ = $(patsubst src/%.cpp,build/%.o,$(SRC))

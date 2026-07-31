@@ -1,4 +1,5 @@
 #include "Customer.h"
+#include <Logger.h>
 
 namespace Banking
 {
@@ -72,6 +73,10 @@ namespace Banking
             email = other.email;
         }
         return *this;
+    }
+    std::string Customer::toString() const
+    {
+        return "[Customer ID: " + std::to_string(id) + ", Name: " + name + ", Address: " + address + ", Phone Number: " + phoneNumber + ", Email: " + email + "]";
     }
     /*
     

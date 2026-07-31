@@ -2,13 +2,13 @@ CXX = g++
 
 CXXFLAGS = -std=c++20 -Wall -Wextra -g
 
-INCLUDES = -I../../common/include -I../../customer/include -I../../Logger/include -I../../utils/include
+INCLUDES = -I include -I../../common/include -I../../customer/include -I../../Logger/include -I../../utils/include
 
 LIBS = -L../../lib -lCommon -lCustomer -lLogger -lUtils
 
 TARGET = ../../bin/BankingSystem
 
-SRC = main.cpp
+SRC = $(wildcard src/*.cpp)
 
 all:
 	mkdir -p ../../bin

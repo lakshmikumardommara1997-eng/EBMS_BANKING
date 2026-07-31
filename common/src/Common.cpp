@@ -1,4 +1,5 @@
 #include "Common.h"
+#include "Logger.h"
 
 #include <iostream>
 
@@ -16,10 +17,8 @@ std::string Common::getVersion() const
 
 void Common::printWelcome() const
 {
-    std::cout << "=====================================\n";
-    std::cout << " Enterprise Banking Management System\n";
-    std::cout << " Version : " << getVersion() << "\n";
-    std::cout << "=====================================\n";
+    Logger::getInstance().info("Welcome to the Enterprise Banking Management System", __FILE__, __LINE__, __FUNCTION__);
+
 }
 
 }
