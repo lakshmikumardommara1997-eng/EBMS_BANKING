@@ -8,7 +8,7 @@ LIBS = -L../../lib -lCommon -lCustomer -lLogger -lUtils
 
 TARGET = ../../bin/BankingSystem
 
-SRC = $(wildcard src/*.cpp)
+SRC = $(wildcard *.cpp) $(wildcard src/*.cpp)
 
 all:
 	mkdir -p ../../bin

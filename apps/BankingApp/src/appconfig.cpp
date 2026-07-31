@@ -1,72 +1,74 @@
-void Banking::setAppName(const std::string& appName)
+#include "appconfig.h"
+#include <iostream>
+void Banking::AppConfig::setAppName(const std::string& appName)
 {
     APP_NAME = appName;
 }
-void Banking::setAppVersion(const std::string& appVersion)
+void Banking::AppConfig::setAppVersion(const std::string& appVersion)
 {
     APP_VERSION = appVersion;
 }
-void Banking::setConfigFilePath(const std::string& configFilePath)
+void Banking::AppConfig::setConfigFilePath(const std::string& configFilePath)
 {
     CONFIG_FILE_PATH = configFilePath;
 }
-void Banking::setLogFilePath(const std::string& logFilePath)
+void Banking::AppConfig::setLogFilePath(const std::string& logFilePath)
 {
     LOG_FILE_PATH = logFilePath;
 }
-void Banking::setLogLevel(const std::string& logLevel)
+void Banking::AppConfig::setLogLevel(const std::string& logLevel)
 {
     LOG_LEVEL = logLevel;
 }
-void Banking::setLogFormat(const std::string& logFormat)
+void Banking::AppConfig::setLogFormat(const std::string& logFormat)
 {
     LOG_FORMAT = logFormat;
 }
-void Banking::setLogToConsole(bool logToConsole)
+void Banking::AppConfig::setLogToConsole(bool logToConsole)
 {
     LOG_TO_CONSOLE = logToConsole;
 }
-void Banking::setLogToFile(bool logToFile)
+void Banking::AppConfig::setLogToFile(bool logToFile)
 {
     LOG_TO_FILE = logToFile;
 }
-void Banking::setLoggingDisabled(bool disableLogging)
+void Banking::AppConfig::setLoggingDisabled(bool disableLogging)
 {
     DISABLE_LOGGING = disableLogging;
 }
-std::string Banking::getAppName() const
+std::string Banking::AppConfig::getAppName() const
 {
     return APP_NAME;
 }
-std::string Banking::getAppVersion() const
+std::string Banking::AppConfig::getAppVersion() const
 {
     return APP_VERSION;
 }
-std::string Banking::getConfigFilePath() const
+std::string Banking::AppConfig::getConfigFilePath() const
 {
     return CONFIG_FILE_PATH;
 }
-std::string Banking::getLogFilePath() const
+std::string Banking::AppConfig::getLogFilePath() const
 {
     return LOG_FILE_PATH;
 }
-std::string Banking::getLogLevel() const
+std::string Banking::AppConfig::getLogLevel() const
 {
     return LOG_LEVEL;
 }
-std::string Banking::getLogFormat() const
+std::string Banking::AppConfig::getLogFormat() const
 {
     return LOG_FORMAT;
 }
-bool Banking::isLogToConsole() const
+bool Banking::AppConfig::isLogToConsole() const
 {
     return LOG_TO_CONSOLE;
 }
-bool Banking::isLogToFile() const
+bool Banking::AppConfig::isLogToFile() const
 {
     return LOG_TO_FILE;
 }
-bool Banking::isLoggingDisabled() const
+bool Banking::AppConfig::isLoggingDisabled() const
 {
     return DISABLE_LOGGING;
 }
