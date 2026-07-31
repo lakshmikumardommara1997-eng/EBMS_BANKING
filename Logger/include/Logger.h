@@ -4,6 +4,7 @@
 #include "systemtime.h"
 #include "appconfig.h"
 #include "Logwritter.h"
+#include <mutex>
 namespace Banking
 {
   
@@ -16,6 +17,8 @@ namespace Banking
         Logger(Logger&&) = delete; // Delete move constructor
         Logger& operator=(Logger&&) = delete; // Delete move assignment operator
         Banking::LogWriter logWriter;
+        
+        std::mutex loggerMutex;
         public:
         static Logger& getInstance();
         void init() ;

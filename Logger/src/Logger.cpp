@@ -2,9 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include "Logwritter.h"
-#include <mutex>
 
-static std::mutex loggerMutex;
 
 Banking::Logger& Banking::Logger::getInstance()
 {
@@ -46,7 +44,7 @@ void Banking::Logger::info(const std::string& message,const std::string& file, i
     if (AppConfig::getInstance().isLogToFile()&& AppConfig::getInstance().getLogLevel() == "INFO") {
         std::lock_guard<std::mutex> lock(loggerMutex); // Lock the mutex to ensure thread safety
         logWriter.write("[" + SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat()) + "]" + "[INFO] " + message + " (" + file + ":" + std::to_string(line) + " in " + function + ")");
-        
+
         // Unlock the mutex after writing to the log file
     }
    // std::cout << "["<< SystemTime::currentDateTime(AppConfig::getInstance().getSysDateTimeFormat())<<"]" << "[INFO] " << message << " (" << file << ":" << line << " in " << function << ")" << std::endl;
@@ -90,6 +88,6 @@ Banking::Logger::~Logger()
 
 {
     // Cleanup resources if needed
-    logWriter.close();
     logWriter.flush();
+    logWriter.close();
 }
