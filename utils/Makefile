@@ -1,8 +1,9 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -Iinclude -fPIC
+CXXFLAGS = -std=c++20 -Wall -Wextra -g -Iinclude -fPIC -I../common/include
 
-SRC = src/*.cpp
-OBJ = build/*.o
+
+SRC = $(wildcard src/*.cpp)
+OBJ = $(patsubst src/%.cpp,build/%.o,$(SRC))
 
 
 TARGET = ../lib/libUtils.so
@@ -16,7 +17,7 @@ create_dirs:
 $(TARGET): $(OBJ)
 	$(CXX) -shared -o $@ $(OBJ)
 
-build/*.o: src/*.cpp
+build/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:

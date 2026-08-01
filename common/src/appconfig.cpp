@@ -80,6 +80,43 @@ std::string Banking::AppConfig::getSysDateTimeFormat() const
 {
     return SYSDATE_TIME_FORMAT;
 }
+void Banking::AppConfig::LoadConfigFromFile(const std::string& configFilePath)
+{
+    try
+    {
+        configParser.parseConfigFile(configFilePath);
+        auto appSection = configParser.getConfigMap("App");
+        if (!appSection.empty())
+        {
+            setAppName(appSection["APP_NAME"]);
+            setAppVersion(appSection["APP_VERSION"]);
+            setConfigFilePath(appSection["CONFIG_FILE_PATH"]);
+            setLogFilePath(appSection["LOG_FILE_PATH"]);
+        }
+        else
+        {
+            std::cerr << "App section not found in config file: " << configFilePath << std::endl;
+        }
+        auto logSection = configParser.getConfigMap("Logging");
+        if (!logSection.empty())
+        {
+            setLogLevel(logSection["LOG_LEVEL"]);
+            setLogFormat(logSection["LOG_FORMAT"]);
+            setLogToConsole(logSection["LOG_TO_CONSOLE"] == "true");
+            setLogToFile(logSection["LOG_TO_FILE"] == "true");
+            setLoggingDisabled(logSection["DISABLE_LOGGING"] == "true");
+            setSysDateTimeFormat(logSection["SYSDATE_TIME_FORMAT"]);
+        }
+        else
+        {
+            std::cerr << "Logging section not found in config file: " << configFilePath << std::endl;
+        }
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Error loading configuration from file: " << e.what() << std::endl;
+    }
+}
 
 std::string Banking::AppConfig::toString() const
 {

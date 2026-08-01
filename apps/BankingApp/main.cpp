@@ -11,18 +11,12 @@ int main()
 {
     Banking::Common common;
     Banking::AppConfig& appConfig = Banking::AppConfig::getInstance();
-    appConfig.setAppName("Banking Application");
-    appConfig.setAppVersion("1.0.0");
-    appConfig.setConfigFilePath("config.ini");
-    appConfig.setLogFilePath("/home/lakshmi/c_plus_plus_projects/EBMS_BANKING/logs/banking_app.log");
-    appConfig.setLogLevel("WARN");
-    appConfig.setLogFormat("[%LEVEL%] %MESSAGE%");
-    appConfig.setLogToConsole(true);
-    appConfig.setLogToFile(true);
-    appConfig.setLoggingDisabled(false); // Disable logging for testing purposes
-    appConfig.setSysDateTimeFormat("%d-%m-%Y %H:%M:%S");
+    appConfig.LoadConfigFromFile("param/Ebms.cfg");
     Banking::Logger& logger = Banking::Logger::getInstance();
     Banking::Logger::getInstance().init();
+    std::cout << "Application Name: " << appConfig.getAppName() << std::endl;
+    std::cout << "Application Version: " << appConfig.getAppVersion() << std::endl;
+    std::cout << "Configuration File Path: " << appConfig.getConfigFilePath() << std::endl;
     logger.info("Starting Banking Application", __FILE__, __LINE__, __FUNCTION__);
     logger.info("Application Configuration: " + appConfig.toString(), __FILE__, __LINE__, __FUNCTION__);
     common.printWelcome();

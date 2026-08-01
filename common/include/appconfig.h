@@ -2,6 +2,7 @@
 #define APPCONFIG_H
 #include <string>
 #include "Loglevel.h"
+#include "configParser.h"
 namespace Banking
 {
     class AppConfig
@@ -22,6 +23,7 @@ namespace Banking
             bool LOG_TO_CONSOLE;
             bool LOG_TO_FILE;
             bool DISABLE_LOGGING;
+            ConfigParse& configParser = ConfigParse::getInstance();
             //AppConfig()=default;
         public:
             static AppConfig& getInstance()
@@ -50,6 +52,8 @@ namespace Banking
             bool isLogToFile() const;
             bool isLoggingDisabled() const;
             std::string toString() const;
+            void LoadConfigFromFile(const std::string& configFilePath);
+            ~AppConfig()=default;
            
     };
 }
