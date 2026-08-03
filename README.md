@@ -149,7 +149,22 @@ The command completed successfully
     4. Now you can see a dynamic library will be created inside the lib directory.
 
         ls -lrta
-        
+
         libodpic.so.6.1.0
         libodpic.so.6 -> libodpic.so.6.1.0
         libodpic.so -> libodpic.so.6
+    5. We need to install few other dependencies as well or otherwise context create will dump core segmentation fault.
+        
+        sudo apt update
+
+        sudo apt install libaio1t64 libaio-dev
+
+        sudo ln -s \
+        /usr/lib/x86_64-linux-gnu/libaio.so.1t64 \
+        /usr/lib/x86_64-linux-gnu/libaio.so.1
+
+        ls -l /usr/lib/x86_64-linux-gnu/libaio.so*
+
+        Verify oracle client again
+
+        genezi -v
