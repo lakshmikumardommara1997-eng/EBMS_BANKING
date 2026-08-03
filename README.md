@@ -1,5 +1,5 @@
 # EBMS_BANKING
-###Build the application###
+# Build the application
     make clean 
     make all
 
@@ -30,6 +30,14 @@ for every module (if you want to build any separate dynamic/shared library) crea
     clean:
 	rm -rf build
 	rm -f $(TARGET)
+
+# Runnig the Application
+
+    ./scripts/run.sh
+    
+    or
+
+    .bin/BankingSystem
 
 ## ORACLE Docker container installation
 1. pull the docker image by using below command.
