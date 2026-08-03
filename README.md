@@ -46,13 +46,13 @@ for every module (if you want to build any separate dynamic/shared library) crea
     docker volume create oracledata
 3. Run the docker container with latest image
 
-    docker run -d \
-  --name oracle-free \
-  -p 1521:1521 \
-  -p 5500:5500 \
-  -e ORACLE_PWD=Oracle@123 \
-  -v oracledata:/opt/oracle/oradata \
-  container-registry.oracle.com/database/free:latest
+        docker run -d \
+    --name oracle-free \
+    -p 1521:1521 \
+    -p 5500:5500 \
+    -e ORACLE_PWD=Oracle@123 \
+    -v oracledata:/opt/oracle/oradata \
+    container-registry.oracle.com/database/free:latest
 
 4. connect to the bash shell of the docker container.
     docker exec -it oracle-free bash
