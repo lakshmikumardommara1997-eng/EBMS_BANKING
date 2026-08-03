@@ -136,4 +136,20 @@ The command completed successfully
          ls $ORACLE_HOME/libclntsh.so*
 
     3.Build Odpi from source.
-    
+
+            cd ../odpi
+            ls -lrta
+            mkdir build
+            cd build
+            sudo apt  install cmake
+            cmake ..
+            cd ..
+            make all
+
+    4. Now you can see a dynamic library will be created inside the lib directory.
+
+        ls -lrta
+        
+        libodpic.so.6.1.0
+        libodpic.so.6 -> libodpic.so.6.1.0
+        libodpic.so -> libodpic.so.6
