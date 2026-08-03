@@ -93,3 +93,47 @@ Service "FREEXDB" has 1 instance(s).
 Service "freepdb1" has 1 instance(s).
   Instance "FREE", status READY, has 1 handler(s) for this service...
 The command completed successfully
+
+
+# Download and install odpi to and oracleinstant client to your machine.
+    
+    1. you can pull the code from github for odpi 
+
+        https://github.com/oracle/odpi
+
+    2. you can download the client from oracle site
+    
+         https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
+          
+    3. download the oracleinstanct sdk zip file to use the interface (.h) files into your code. from above link , you can see an SDK file
+
+
+    4. unzip and integrate the odpi and instant client to your codeand SDK 
+
+        mkdir -p ~/oracle
+        cd ~/oracle
+        unzip /home/lakshmi/c_plus_plus_projects/EBMS_BANKING/instantclient-basic-linux.x64-23.26.3.0.0.zip
+        
+        unzip instantclient-sdk-linuxx64.zip
+
+    5.verify the SDk include by running below command.
+        ls sdk/include
+
+## Configure Environement variables related to above odpi lib
+
+    1. vi ~/.bashrc
+     add below lines to your bashrc file
+
+        export LD_LIBRARY_PATH=/home/lakshmi/c_plus_plus_projects/EBMS_BANKING/lib:$LD_LIBRARY_PATH
+        export ORACLE_HOME=$HOME/oracle/instantclient_23_26
+        export LD_LIBRARY_PATH=$ORACLE_HOME:$LD_LIBRARY_PATH
+        export PATH=$ORACLE_HOME:$PATH
+
+    2. run below command to activate the profile file.
+
+         source ~/.bashrc
+         echo $ORACLE_HOME
+         ls $ORACLE_HOME/libclntsh.so*
+
+    3.Build Odpi from source.
+    
