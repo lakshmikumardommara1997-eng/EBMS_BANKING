@@ -49,12 +49,16 @@ for every module (if you want to build any separate dynamic/shared library) crea
 4. connect to the bash shell of the docker container.
     docker exec -it oracle-free bash
 5. Verify the db by connecting to DB using below command.
-    bash-4.4$ sqlplus / as sysdba
+   
+        bash-4.4$ sqlplus / as sysdba
 
 6. verify the listener status by connecting to container machine using below command.
-    lsnrctl status
+
+        lsnrctl status
+
 7. or directly verify from machine using docker command.
     docker exec -it oracle-free lsnrctl status
+
     Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=0.0.0.0)(PORT=1521)))
 STATUS of the LISTENER
 ------------------------
