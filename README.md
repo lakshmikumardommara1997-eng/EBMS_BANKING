@@ -33,6 +33,9 @@ for every module (if you want to build any separate dynamic/shared library) crea
 
 # Runnig the Application
 
+1. Create Ebms.cfg file inside param (if no param folder create one )
+2. Run the application
+
     ./scripts/run.sh
     
     or
