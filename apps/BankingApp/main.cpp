@@ -100,7 +100,7 @@ int main()
     producerThread.join();
     consumerThread.join();
     Banking::OracleConnection oracleConnection;
-    if (oracleConnection.connect("system", "Oracle@123", "localhost:1521/FREEPDB1"))
+    if (oracleConnection.connect(appConfig.getDBUser(), appConfig.getDBPassword(), appConfig.getDBConnectString()))
     {
         logger.info("Connected to Oracle database successfully", __FILE__, __LINE__, __FUNCTION__);
         // Perform database operations here
@@ -109,6 +109,8 @@ int main()
     }
     else
     {   
+        logger.info("Failed to connect to Oracle database", __FILE__, __LINE__, __FUNCTION__);
+        logger.info("user: " + appConfig.getDBUser() + ", password: " + appConfig.getDBPassword() + ", connect string: " + appConfig.getDBConnectString(), __FILE__, __LINE__, __FUNCTION__);
         logger.error("Failed to connect to Oracle database", __FILE__, __LINE__, __FUNCTION__);
     }   
     logger.info("Banking Application finished", __FILE__, __LINE__, __FUNCTION__);

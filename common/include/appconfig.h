@@ -23,6 +23,9 @@ namespace Banking
             bool LOG_TO_CONSOLE;
             bool LOG_TO_FILE;
             bool DISABLE_LOGGING;
+            std::string DB_USER;
+            std::string DB_PASSWORD;
+            std::string DB_CONNECT_STRING;
             ConfigParse& configParser = ConfigParse::getInstance();
             //AppConfig()=default;
         public:
@@ -41,6 +44,12 @@ namespace Banking
             void setLogToFile(bool logToFile);
             void setLoggingDisabled(bool disableLogging);
             void setSysDateTimeFormat(const std::string& sysDateTimeFormat);
+            void setDBUser(const std::string& dbUser);
+            void setDBPassword(const std::string& dbPassword);
+            void setDBConnectString(const std::string& dbConnectString);
+            std::string getDBUser() const;
+            std::string getDBPassword() const;
+            std::string getDBConnectString() const;
             std::string getSysDateTimeFormat() const;
             std::string getAppName() const;
             std::string getAppVersion() const;

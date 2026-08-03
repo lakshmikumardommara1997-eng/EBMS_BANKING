@@ -111,6 +111,17 @@ void Banking::AppConfig::LoadConfigFromFile(const std::string& configFilePath)
         {
             std::cerr << "Logging section not found in config file: " << configFilePath << std::endl;
         }
+        auto dbSection = configParser.getConfigMap("Database");
+        if (!dbSection.empty())
+        {
+            setDBUser(dbSection["DB_USER"]);
+            setDBPassword(dbSection["DB_PASSWORD"]);
+            setDBConnectString(dbSection["DB_CONNECTION_STRING"]);
+        }
+        else
+        {
+            std::cerr << "Database section not found in config file: " << configFilePath << std::endl;
+        }
     }
     catch (const std::exception& e)
     {
@@ -126,4 +137,28 @@ std::string Banking::AppConfig::toString() const
            ", LOG_TO_CONSOLE=" + (LOG_TO_CONSOLE ? "true" : "false") +
            ", LOG_TO_FILE=" + (LOG_TO_FILE ? "true" : "false") +
            ", DISABLE_LOGGING=" + (DISABLE_LOGGING ? "true" : "false") + ", SYSDATE_TIME_FORMAT=" + SYSDATE_TIME_FORMAT + "]";
+}
+void Banking::AppConfig::setDBUser(const std::string& dbUser)
+{
+    DB_USER = dbUser;
+}
+void Banking::AppConfig::setDBPassword(const std::string& dbPassword)
+{
+    DB_PASSWORD = dbPassword;
+}
+void Banking::AppConfig::setDBConnectString(const std::string& dbConnectString)
+{
+    DB_CONNECT_STRING = dbConnectString;
+}
+std::string Banking::AppConfig::getDBUser() const
+{
+    return DB_USER;
+}
+std::string Banking::AppConfig::getDBPassword() const
+{
+    return DB_PASSWORD;
+}
+std::string Banking::AppConfig::getDBConnectString() const
+{
+    return DB_CONNECT_STRING;
 }
