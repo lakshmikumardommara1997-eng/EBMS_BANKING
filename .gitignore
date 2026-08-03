@@ -15,7 +15,7 @@
 
 # Linker files
 *.ilk
-*.cfg
+Ebms.cfg
 # Debugger Files
 *.pdb
 
@@ -59,3 +59,4 @@ vcpkg_installed/
 Testing/
 .cache/
 logs/
+param/
