@@ -1,9 +1,12 @@
 # EBMS_BANKING
 ###Build the application###
-make all 
-make clean
+    make clean 
+    make all
+
+    Note: will add debug target in future to enable the debugging in gdb  by setting -g dynamically
 
 for every module (if you want to build any separate dynamic/shared library) create a make and include in main make file. Ex:
+
     CXX = g++
     CXXFLAGS = -std=c++20 -Wall -g -Wextra -Iinclude -fPIC -I../common/include -I../Logger/include -I../utils/include
 
