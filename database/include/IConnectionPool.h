@@ -1,5 +1,8 @@
 #ifndef ICONNECTIONPOOL_H
 #define ICONNECTIONPOOL_H
+#include <string>
+#include <memory>
+#include "IDatabaseConnection.h"
 
 namespace Banking
 {

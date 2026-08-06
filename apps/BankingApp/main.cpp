@@ -10,6 +10,8 @@
 #include <condition_variable>
 #include "Oracleconnection.h"
 #include "IDatabaseConnection.h"
+#include "IConnectionPool.h"
+#include "ConnectionPool.h"
 
 
 #define MAX_QUEUE_SIZE 10000
@@ -100,9 +102,18 @@ int main()
     std::thread consumerThread(ConsumeCustomerData, std::ref(customers), std::ref(logger));
     producerThread.join();
     consumerThread.join();
-     std::unique_ptr<Banking::IDatabaseConnection> dbConnection = std::make_unique<Banking::OracleConnection>();
-    if (dbConnection->connect(appConfig.getDBUser(), appConfig.getDBPassword(), appConfig.getDBConnectString()))
+    std::unique_ptr<Banking::IConnectionPool> connectionPool = std::make_unique<Banking::ConnectionPool>();
+    if (connectionPool->initialize(appConfig.getDBUser(), appConfig.getDBPassword(), appConfig.getDBConnectString(), 5))
     {
+        logger.info("Connection pool initialized successfully", __FILE__, __LINE__, __FUNCTION__);
+    }
+    else
+    {
+        logger.error("Failed to initialize connection pool", __FILE__, __LINE__, __FUNCTION__);
+    }
+    std::unique_ptr<Banking::IDatabaseConnection> dbConnection = connectionPool->acquireConnection();
+    if (dbConnection && dbConnection->isConnected())
+    { 
         logger.info("Connected to Oracle database successfully", __FILE__, __LINE__, __FUNCTION__);
         // Perform database operations here
         dbConnection->disconnect();
@@ -113,7 +124,10 @@ int main()
         logger.info("Failed to connect to Oracle database", __FILE__, __LINE__, __FUNCTION__);
         logger.info("user: " + appConfig.getDBUser() + ", password: " + appConfig.getDBPassword() + ", connect string: " + appConfig.getDBConnectString(), __FILE__, __LINE__, __FUNCTION__);
         logger.error("Failed to connect to Oracle database", __FILE__, __LINE__, __FUNCTION__);
-    }   
+    }  
+    connectionPool->releaseConnection(std::move(dbConnection)); 
+    connectionPool->shutdown();
+
     logger.info("Banking Application finished", __FILE__, __LINE__, __FUNCTION__);
     return 0;
 
