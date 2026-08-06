@@ -22,9 +22,11 @@ public:
     void disconnect() override;
 
     bool isConnected() const override;
-    void commit() override;
-    void rollback() override;
-    void executeQuery(const std::string& query) override;
+    bool beginTransaction() override;
+    bool commit() override;
+    bool rollback() override;
+    bool setAutoCommit(bool enabled) override;
+    bool executeQuery(const std::string& query) override;
 
     dpiConn* getConnection() const;
 

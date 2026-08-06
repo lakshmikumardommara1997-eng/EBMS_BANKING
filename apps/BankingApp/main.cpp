@@ -117,18 +117,34 @@ int main()
     
     intiConnectionPool(*connectionPool);
     std::unique_ptr<Banking::IDatabaseConnection> dbConnection = connectionPool->acquireConnection();
-    if(dbConnection && dbConnection->isConnected())
+    if (dbConnection && dbConnection->isConnected())
     {
         logger.info("Connected to Oracle database successfully", __FILE__, __LINE__, __FUNCTION__);
         // Perform database operations here
-        dbConnection->disconnect();
-        logger.info("Disconnected from Oracle database", __FILE__, __LINE__, __FUNCTION__);
+        if (!dbConnection->beginTransaction())
+        {
+            logger.error("Failed to begin transaction", __FILE__, __LINE__, __FUNCTION__);
+        }
+
+        // Example query execution, replace with your own SQL logic.
+        if (!dbConnection->executeQuery("SELECT 1 FROM DUAL"))
+        {
+            dbConnection->rollback();
+            logger.error("Query execution failed; transaction rolled back", __FILE__, __LINE__, __FUNCTION__);
+        }
+        else if (!dbConnection->commit())
+        {
+            logger.error("Commit failed", __FILE__, __LINE__, __FUNCTION__);
+        }
+
+        connectionPool->releaseConnection(std::move(dbConnection));
     }
     else
     {
-        logger.error("Failed to connect to Oracle database", __FILE__, __LINE__, __FUNCTION__);
+        logger.error("Failed to acquire a database connection", __FILE__, __LINE__, __FUNCTION__);
         logger.info("user: " + appConfig.getDBUser() + ", password: " + appConfig.getDBPassword() + ", connect string: " + appConfig.getDBConnectString(), __FILE__, __LINE__, __FUNCTION__);
     }
+    connectionPool->shutdown();
 
     
     /*

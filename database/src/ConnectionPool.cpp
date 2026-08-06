@@ -1,49 +1,86 @@
 #include "ConnectionPool.h"
-#include <memory>
-#include <string>
 #include "Oracleconnection.h"
 #include <iostream>
 
-namespace Banking{
-
-   bool ConnectionPool::initialize(const std::string& user,const std::string& password,const std::string& connectString,int poolSize)
+namespace Banking
+{
+    bool ConnectionPool::initialize(const std::string& user, const std::string& password, const std::string& connectString, int poolSize)
     {
-        for(int i=0;i<poolSize;i++)
+        if (poolSize <= 0)
+            return false;
+
+        std::lock_guard<std::mutex> lock(m_mutex);
+        if (m_shutdown)
+            return false;
+
+        m_connections.clear();
+        for (int i = 0; i < poolSize; ++i)
         {
-            std::unique_ptr<IDatabaseConnection> conn = std::make_unique<OracleConnection>();
-            if(conn->connect(user,password,connectString))
+            auto conn = std::make_unique<OracleConnection>();
+            if (!conn->connect(user, password, connectString))
             {
-                m_connections.push_back(std::move(conn));
+                std::cerr << "Failed to create connection " << i << std::endl;
+                for (auto& createdConn : m_connections)
+                {
+                    if (createdConn && createdConn->isConnected())
+                    {
+                        createdConn->disconnect();
+                    }
+                }
+                m_connections.clear();
+                return false;
             }
-            else
-            {
-                std::cerr<<"Failed to create connection "<<i<<std::endl;
-            }
+            m_connections.push_back(std::move(conn));
         }
-        return true;
+
+        return !m_connections.empty();
     }
 
     void ConnectionPool::shutdown()
     {
-        for(auto& conn:m_connections)
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_shutdown = true;
+        m_condition.notify_all();
+
+        for (auto& conn : m_connections)
         {
-            conn->disconnect();
+            if (conn && conn->isConnected())
+            {
+                conn->disconnect();
+            }
         }
         m_connections.clear();
     }
+
     std::unique_ptr<IDatabaseConnection> ConnectionPool::acquireConnection()
     {
         std::unique_lock<std::mutex> lock(m_mutex);
-        m_condition.wait(lock,[this](){return !m_connections.empty();});
+        m_condition.wait(lock, [this]() { return m_shutdown || !m_connections.empty(); });
+
+        if (m_shutdown && m_connections.empty())
+            return nullptr;
+
         auto conn = std::move(m_connections.front());
         m_connections.pop_front();
         return conn;
     }
+
     void ConnectionPool::releaseConnection(std::unique_ptr<IDatabaseConnection> conn)
     {
+        if (!conn)
+            return;
+
         std::lock_guard<std::mutex> lock(m_mutex);
+        if (m_shutdown)
+        {
+            if (conn->isConnected())
+            {
+                conn->disconnect();
+            }
+            return;
+        }
+
         m_connections.push_back(std::move(conn));
         m_condition.notify_one();
     }
-
 }
