@@ -27,6 +27,7 @@ public:
     bool rollback() override;
     bool setAutoCommit(bool enabled) override;
     bool executeQuery(const std::string& query) override;
+    bool executeQuery(const IQuery& query) override;
 
     dpiConn* getConnection() const;
 

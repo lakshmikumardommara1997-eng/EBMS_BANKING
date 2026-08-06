@@ -2,9 +2,12 @@
 #define IDATABASECONNECTION_H
 
 #include <string>
+#include <memory>
 
 namespace Banking
 {
+    class IQuery;
+
     class IDatabaseConnection
     {
         public:
@@ -17,6 +20,7 @@ namespace Banking
             virtual bool rollback() = 0;
             virtual bool setAutoCommit(bool enabled) = 0;
             virtual bool executeQuery(const std::string& query) = 0;
+            virtual bool executeQuery(const IQuery& query) = 0;
     };
 }
 #endif // IDATABASECONNECTION_H
