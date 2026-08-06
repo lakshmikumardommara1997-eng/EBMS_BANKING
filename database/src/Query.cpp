@@ -38,6 +38,12 @@ namespace Banking
         return *this;
     }
 
+    Query& Query::bind(std::uint32_t value)
+    {
+        m_parameters.push_back(static_cast<int>(value));
+        return *this;
+    }
+
     Query& Query::bind(double value)
     {
         m_parameters.push_back(value);

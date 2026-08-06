@@ -10,21 +10,37 @@ namespace Banking
     class Customer{
         private:
             Banking::Types::CUSTOMER_ID id;
-            std::string name;
+            std::string firstName;
+            std::string lastName;
             std::string address;
             std::string phoneNumber;
             std::string email;
+            std::string city;
+            std::string state;
+            std::string zipCode;
+            std::string createdAt;
         public:
+            Customer(Banking::Types::CUSTOMER_ID id, const std::string& firstName, const std::string& lastName, const std::string& address, const std::string& phoneNumber, const std::string& email, const std::string& city = "", const std::string& state = "", const std::string& zipCode = "", const std::string& createdAt = "");
             Customer(Banking::Types::CUSTOMER_ID id, const std::string& name, const std::string& address, const std::string& phoneNumber, const std::string& email);
             Banking::Types::CUSTOMER_ID getId() const;
-            std::string getName() const;
+            std::string getFirstName() const;
+            std::string getLastName() const;
             std::string getAddress() const;
             std::string getPhoneNumber() const;
             std::string getEmail() const;
-            Customer& setName(const std::string& name);
-            Customer& setAddress(const std::string& address);   
+            std::string getCity() const;
+            std::string getState() const;
+            std::string getZipCode() const;
+            std::string getCreatedAt() const;
+            Customer& setFirstName(const std::string& firstName);
+            Customer& setLastName(const std::string& lastName);
+            Customer& setAddress(const std::string& address);
             Customer& setPhoneNumber(const std::string& phoneNumber);
             Customer& setEmail(const std::string& email);
+            Customer& setCity(const std::string& city);
+            Customer& setState(const std::string& state);
+            Customer& setZipCode(const std::string& zipCode);
+            Customer& setCreatedAt(const std::string& createdAt);
             Customer(const Customer& other);
             Customer& operator=(const Customer& other);
             ~Customer();

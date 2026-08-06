@@ -3,6 +3,7 @@
 
 #include "IQuery.h"
 #include <vector>
+#include <cstdint>
 
 namespace Banking
 {
@@ -17,6 +18,7 @@ namespace Banking
         bool hasParameters() const override;
 
         Query& bind(int value);
+        Query& bind(std::uint32_t value);
         Query& bind(double value);
         Query& bind(const std::string& value);
         Query& bind(bool value);
