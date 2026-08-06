@@ -2,10 +2,9 @@
 
 #include <iostream>
 
-namespace Banking
-{
 
-OracleConnection::OracleConnection()
+
+Banking::OracleConnection::OracleConnection()
     : m_context(nullptr),
       m_connection(nullptr)
 {
@@ -19,7 +18,7 @@ OracleConnection::OracleConnection()
     }
 }
 
-OracleConnection::~OracleConnection()
+Banking::OracleConnection::~OracleConnection()
 {
     disconnect();
 
@@ -30,7 +29,7 @@ OracleConnection::~OracleConnection()
     }
 }
 
-bool OracleConnection::connect(const std::string& user,
+bool Banking::OracleConnection::connect(const std::string& user,
                                const std::string& password,
                                const std::string& connectString)
 {
@@ -62,7 +61,7 @@ bool OracleConnection::connect(const std::string& user,
     return true;
 }
 
-void OracleConnection::disconnect()
+void Banking::OracleConnection::disconnect()
 {
     if (m_connection)
     {
@@ -71,14 +70,26 @@ void OracleConnection::disconnect()
     }
 }
 
-bool OracleConnection::isConnected() const
+bool Banking::OracleConnection::isConnected() const
 {
     return m_connection != nullptr;
 }
 
-dpiConn* OracleConnection::getConnection() const
+dpiConn* Banking::OracleConnection::getConnection() const
 {
     return m_connection;
 }
-
+void Banking::OracleConnection::commit()
+{
+    if (m_connection)
+    {
+        if (dpiConn_commit(m_connection) < 0)
+        {
+            dpiErrorInfo errorInfo;
+            dpiContext_getError(m_context, &errorInfo);
+            std::cerr << "Commit failed: " << errorInfo.message << std::endl;
+        }
+    }
 }
+
+
