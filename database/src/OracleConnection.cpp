@@ -1,4 +1,4 @@
-#include "OracleConnection.h"
+#include "Oracleconnection.h"
 
 #include <iostream>
 
@@ -90,6 +90,44 @@ void Banking::OracleConnection::commit()
             std::cerr << "Commit failed: " << errorInfo.message << std::endl;
         }
     }
+}
+void Banking::OracleConnection::rollback()
+{
+    if (m_connection)
+    {
+        if (dpiConn_rollback(m_connection) < 0)
+        {
+            dpiErrorInfo errorInfo;
+            dpiContext_getError(m_context, &errorInfo);
+            std::cerr << "Rollback failed: " << errorInfo.message << std::endl;
+        }
+    }
+}
+void Banking::OracleConnection::executeQuery(const std::string& query)
+{
+    if (!m_connection)
+    {
+        std::cerr << "Not connected to the database." << std::endl;
+        return;
+    }
+
+    dpiStmt* stmt = nullptr;
+    if (dpiConn_prepareStmt(m_connection, 0, query.c_str(), query.length(), nullptr, 0, &stmt) < 0)
+    {
+        dpiErrorInfo errorInfo;
+        dpiContext_getError(m_context, &errorInfo);
+        std::cerr << "Failed to prepare statement: " << errorInfo.message << std::endl;
+        return;
+    }
+
+    if (dpiStmt_execute(stmt, 0, nullptr) < 0)
+    {
+        dpiErrorInfo errorInfo;
+        dpiContext_getError(m_context, &errorInfo);
+        std::cerr << "Failed to execute statement: " << errorInfo.message << std::endl;
+    }
+
+    dpiStmt_release(stmt);
 }
 
 

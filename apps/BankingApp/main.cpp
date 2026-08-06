@@ -8,7 +8,8 @@
 #include "Logger.h"
 #include <mutex>
 #include <condition_variable>
-#include "OracleConnection.h"
+#include "Oracleconnection.h"
+#include "IDatabaseConnection.h"
 
 
 #define MAX_QUEUE_SIZE 10000
@@ -99,12 +100,12 @@ int main()
     std::thread consumerThread(ConsumeCustomerData, std::ref(customers), std::ref(logger));
     producerThread.join();
     consumerThread.join();
-    Banking::OracleConnection oracleConnection;
-    if (oracleConnection.connect(appConfig.getDBUser(), appConfig.getDBPassword(), appConfig.getDBConnectString()))
+     std::unique_ptr<Banking::IDatabaseConnection> dbConnection = std::make_unique<Banking::OracleConnection>();
+    if (dbConnection->connect(appConfig.getDBUser(), appConfig.getDBPassword(), appConfig.getDBConnectString()))
     {
         logger.info("Connected to Oracle database successfully", __FILE__, __LINE__, __FUNCTION__);
         // Perform database operations here
-        oracleConnection.disconnect();
+        dbConnection->disconnect();
         logger.info("Disconnected from Oracle database", __FILE__, __LINE__, __FUNCTION__);
     }
     else
