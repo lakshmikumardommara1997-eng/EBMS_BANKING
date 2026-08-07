@@ -17,8 +17,8 @@ namespace Banking
             return false;
 
         QueryBuilder qb;
-        Query q = qb.insert("customers")
-                    .values({"id", "first_name", "last_name", "address", "phone", "email", "city", "state", "zip_code", "created_at"})
+        Query q = qb.insert("customer")
+                    .values({"customer_id", "first_name", "last_name", "address", "phone_number", "email", "city", "state", "zip_code", "created_at"})
                     .build();
 
         q.bind(customer.getId())
@@ -55,17 +55,17 @@ namespace Banking
             return false;
 
         QueryBuilder qb;
-        Query q = qb.update("customers")
+        Query q = qb.update("customer")
                     .set("first_name", "?")
                     .set("last_name", "?")
                     .set("address", "?")
-                    .set("phone", "?")
+                    .set("phone_number", "?")
                     .set("email", "?")
                     .set("city", "?")
                     .set("state", "?")
                     .set("zip_code", "?")
                     .set("created_at", "?")
-                    .where("id = ?")
+                    .where("customer_id = ?")
                     .build();
 
         q.bind(customer.getFirstName())
@@ -101,7 +101,7 @@ namespace Banking
         if (!conn || !conn->isConnected())
             return false;
 
-        Query q("DELETE FROM customers WHERE id = ?");
+        Query q("DELETE FROM customer WHERE customer_id = ?");
         q.bind(static_cast<std::uint32_t>(id));
 
         bool ok = false;

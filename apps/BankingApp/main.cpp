@@ -12,6 +12,9 @@
 #include "IDatabaseConnection.h"
 #include "IConnectionPool.h"
 #include "ConnectionPool.h"
+#include "CustomerRepository.h"
+#include "CustomerService.h"
+#include "CustomerManager.h"
 
 
 #define MAX_QUEUE_SIZE 10000
@@ -113,70 +116,23 @@ int main()
     std::thread consumerThread(ConsumeCustomerData, std::ref(customers), std::ref(logger));
     producerThread.join();
     consumerThread.join();
-    std::unique_ptr<Banking::IConnectionPool> connectionPool = std::make_unique<Banking::ConnectionPool>();
+    auto connectionPool = std::make_unique<Banking::ConnectionPool>();
     
     intiConnectionPool(*connectionPool);
-    std::unique_ptr<Banking::IDatabaseConnection> dbConnection = connectionPool->acquireConnection();
-    if (dbConnection && dbConnection->isConnected())
+    auto customerRepo =std::make_shared<Banking::CustomerRepository>(*connectionPool);
+    auto customerService = std::make_shared<Banking::CustomerService>(customerRepo);
+    Banking::CustomerManager customerManager(customerService);
+
+    Banking::Customer newcustomer(10001, "Alice", "Smith", "456 Elm St", "+91-9876543210", "alice.smith@example.com");
+    if(customerManager.registerCustomer(newcustomer))
     {
-        logger.info("Connected to Oracle database successfully", __FILE__, __LINE__, __FUNCTION__);
-        // Perform database operations here
-        if (!dbConnection->beginTransaction())
-        {
-            logger.error("Failed to begin transaction", __FILE__, __LINE__, __FUNCTION__);
-        }
-
-        // Example query execution, replace with your own SQL logic.
-        if (!dbConnection->executeQuery("SELECT 1 FROM DUAL"))
-        {
-            dbConnection->rollback();
-            logger.error("Query execution failed; transaction rolled back", __FILE__, __LINE__, __FUNCTION__);
-        }
-        else if (!dbConnection->commit())
-        {
-            logger.error("Commit failed", __FILE__, __LINE__, __FUNCTION__);
-        }
-
-        connectionPool->releaseConnection(std::move(dbConnection));
+        logger.info("Customer registered: " + newcustomer.toString(), __FILE__, __LINE__, __FUNCTION__);
     }
     else
     {
-        logger.error("Failed to acquire a database connection", __FILE__, __LINE__, __FUNCTION__);
-        logger.info("user: " + appConfig.getDBUser() + ", password: " + appConfig.getDBPassword() + ", connect string: " + appConfig.getDBConnectString(), __FILE__, __LINE__, __FUNCTION__);
+        logger.error("Failed to register customer: " + newcustomer.toString(), __FILE__, __LINE__, __FUNCTION__);
     }
     connectionPool->shutdown();
-
-    
-    /*
-    if (connectionPool->initialize(appConfig.getDBUser(), appConfig.getDBPassword(), appConfig.getDBConnectString(), 5))
-    {
-        logger.info("Connection pool initialized successfully", __FILE__, __LINE__, __FUNCTION__);
-    }
-    else
-    {
-        logger.error("Failed to initialize connection pool", __FILE__, __LINE__, __FUNCTION__);
-    }
-    std::unique_ptr<Banking::IDatabaseConnection> dbConnection = connectionPool->acquireConnection();
-    
-    
-    
-    if (dbConnection && dbConnection->isConnected())
-    { 
-        logger.info("Connected to Oracle database successfully", __FILE__, __LINE__, __FUNCTION__);
-        // Perform database operations here
-        dbConnection->disconnect();
-        logger.info("Disconnected from Oracle database", __FILE__, __LINE__, __FUNCTION__);
-    }
-    else
-    {   
-        logger.info("Failed to connect to Oracle database", __FILE__, __LINE__, __FUNCTION__);
-        logger.info("user: " + appConfig.getDBUser() + ", password: " + appConfig.getDBPassword() + ", connect string: " + appConfig.getDBConnectString(), __FILE__, __LINE__, __FUNCTION__);
-        logger.error("Failed to connect to Oracle database", __FILE__, __LINE__, __FUNCTION__);
-    }  
-    connectionPool->releaseConnection(std::move(dbConnection)); 
-    connectionPool->shutdown();
-    */
-
     logger.info("Banking Application finished", __FILE__, __LINE__, __FUNCTION__);
     return 0;
 

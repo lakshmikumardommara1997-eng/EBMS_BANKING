@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <cstring>
+#include "Logger.h"
 
 namespace
 {
@@ -20,8 +21,6 @@ namespace
         {
             return m_context;
         }
-
-    private:
         OracleEnvironment()
             : m_context(nullptr)
         {
@@ -30,20 +29,11 @@ namespace
                                   &m_context,
                                   nullptr) < 0)
             {
-                std::cerr << "Failed to initialize ODPI-C context" << std::endl;
+                Banking::Logger::getInstance().error("Failed to initialize ODPI-C context", __FILE__, __LINE__, __FUNCTION__);
                 m_context = nullptr;
             }
         }
-
-        ~OracleEnvironment()
-        {
-            if (m_context)
-            {
-                dpiContext_destroy(m_context);
-                m_context = nullptr;
-            }
-        }
-
+        
         OracleEnvironment(const OracleEnvironment&) = delete;
         OracleEnvironment& operator=(const OracleEnvironment&) = delete;
 
@@ -54,19 +44,42 @@ namespace
     {
         if (!ctx)
         {
-            std::cerr << prefix << "Unknown ODPI-C error" << std::endl;
+            Banking::Logger::getInstance().error(prefix + std::string("Unknown ODPI-C error"), __FILE__, __LINE__, __FUNCTION__);
             return;
         }
         dpiErrorInfo errorInfo;
         dpiContext_getError(ctx, &errorInfo);
         if (errorInfo.code != 0)
         {
-            std::cerr << prefix << errorInfo.message << std::endl;
+            Banking::Logger::getInstance().error(prefix + std::string(errorInfo.message), __FILE__, __LINE__, __FUNCTION__);
         }
         else
         {
-            std::cerr << prefix << "Unknown ODPI-C error" << std::endl;
+            Banking::Logger::getInstance().error(prefix + std::string("Unknown ODPI-C error"), __FILE__, __LINE__, __FUNCTION__);
         }
+    }
+
+    std::string normalizeOracleBindVariables(const std::string& sql)
+    {
+        std::string result;
+        result.reserve(sql.size());
+        size_t bindIndex = 1;
+
+        for (char ch : sql)
+        {
+            if (ch == '?')
+            {
+                result += ':';
+                result += std::to_string(bindIndex);
+                ++bindIndex;
+            }
+            else
+            {
+                result += ch;
+            }
+        }
+
+        return result;
     }
 
     struct ParameterBinding
@@ -106,7 +119,8 @@ namespace
             {
                 dpiVar* var = nullptr;
                 dpiData* data = nullptr;
-                if (dpiConn_newVar(conn, DPI_ORACLE_TYPE_VARCHAR, DPI_NATIVE_TYPE_BYTES, 1, 0, 0, 0, nullptr, &var, &data) < 0)
+                // allocate at least 1 byte for NULL string variable to avoid partial-multibyte issues
+                if (dpiConn_newVar(conn, DPI_ORACLE_TYPE_VARCHAR, DPI_NATIVE_TYPE_BYTES, 1, 1, 0, 0, nullptr, &var, &data) < 0)
                 {
                     logOracleError(ctx, "Failed to create NULL variable: ");
                     return false;
@@ -169,15 +183,32 @@ namespace
                 dpiVar* var = nullptr;
                 dpiData* data = nullptr;
 
-                if (dpiConn_newVar(conn, DPI_ORACLE_TYPE_VARCHAR, DPI_NATIVE_TYPE_BYTES, 1, static_cast<uint32_t>(strValue.length()), 0, 0, nullptr, &var, &data) < 0)
+                // allocate element size = string byte length + 1 to accommodate multibyte encodings and terminator
+                if (dpiConn_newVar(conn, DPI_ORACLE_TYPE_VARCHAR, DPI_NATIVE_TYPE_BYTES, 1, static_cast<uint32_t>(strValue.size() + 1), 0, 0, nullptr, &var, &data) < 0)
                 {
                     logOracleError(ctx, "Failed to create string variable: ");
                     return false;
                 }
 
-                data[0].isNull = 0;
-                data[0].value.asBytes.ptr = const_cast<char*>(strValue.c_str());
-                data[0].value.asBytes.length = strValue.length();
+                // Log raw bytes (hex) and length to help diagnose encoding issues
+                {
+                    const unsigned char* bytes = reinterpret_cast<const unsigned char*>(strValue.c_str());
+                    std::string hex;
+                    hex.reserve(strValue.size() * 3);
+                    for (size_t bi = 0; bi < strValue.size(); ++bi)
+                    {
+                        char buf[4];
+                        snprintf(buf, sizeof(buf), "%02X ", bytes[bi]);
+                        hex += buf;
+                    }
+                    Banking::Logger::getInstance().debug(std::string("[DB DUMP] binding string bytes length=") + std::to_string(strValue.size()) + " hex=" + hex, __FILE__, __LINE__, __FUNCTION__);
+                }
+
+                if (dpiVar_setFromBytes(var, 0, strValue.c_str(), static_cast<uint32_t>(strValue.length())) < 0)
+                {
+                    logOracleError(ctx, "Failed to set string value: ");
+                    return false;
+                }
 
                 if (dpiStmt_bindByPos(stmt, oracleIndex, var) < 0)
                 {
@@ -213,7 +244,7 @@ namespace
         }
         catch (const std::exception& e)
         {
-            std::cerr << "Exception in bindParameter: " << e.what() << std::endl;
+            Banking::Logger::getInstance().error(std::string("Exception in bindParameter: ") + e.what(), __FILE__, __LINE__, __FUNCTION__);
             return false;
         }
     }
@@ -325,13 +356,13 @@ bool Banking::OracleConnection::executeQuery(const std::string& query)
 {
     if (!m_connection)
     {
-        std::cerr << "Not connected to the database." << std::endl;
+        Banking::Logger::getInstance().error("Not connected to the database.", __FILE__, __LINE__, __FUNCTION__);
         return false;
     }
 
     if (query.empty())
     {
-        std::cerr << "Query is empty." << std::endl;
+        Banking::Logger::getInstance().error("Query is empty.", __FILE__, __LINE__, __FUNCTION__);
         return false;
     }
 
@@ -357,14 +388,14 @@ bool Banking::OracleConnection::executeQuery(const IQuery& query)
 {
     if (!m_connection)
     {
-        std::cerr << "Not connected to the database." << std::endl;
+        Banking::Logger::getInstance().error("Not connected to the database.", __FILE__, __LINE__, __FUNCTION__);
         return false;
     }
 
     const std::string& sql = query.getSql();
     if (sql.empty())
     {
-        std::cerr << "Query is empty." << std::endl;
+        Banking::Logger::getInstance().error("Query is empty.", __FILE__, __LINE__, __FUNCTION__);
         return false;
     }
 
@@ -379,6 +410,19 @@ bool Banking::OracleConnection::executeQuery(const IQuery& query)
 
     if (query.hasParameters())
     {
+        std::string normalizedSql = normalizeOracleBindVariables(sql);
+        if (normalizedSql != sql)
+        {
+            dpiStmt* normalizedStmt = nullptr;
+            stmt.reset(nullptr);
+            if (dpiConn_prepareStmt(m_connection, 0, normalizedSql.c_str(), normalizedSql.length(), nullptr, 0, &normalizedStmt) < 0)
+            {
+                logOracleError(m_context, "Failed to prepare normalized statement: ");
+                return false;
+            }
+            stmt.reset(normalizedStmt);
+        }
+
         for (size_t i = 0; i < query.getParameterCount(); ++i)
         {
             if (!bindParameter(stmt.get(), m_connection, i, query.getParameter(i), m_context))

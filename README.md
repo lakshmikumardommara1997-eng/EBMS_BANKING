@@ -131,6 +131,7 @@ The command completed successfully
         export ORACLE_HOME=$HOME/oracle/instantclient_23_26
         export LD_LIBRARY_PATH=$ORACLE_HOME:$LD_LIBRARY_PATH
         export PATH=$ORACLE_HOME:$PATH
+        export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
 
     2. run below command to activate the profile file.
 

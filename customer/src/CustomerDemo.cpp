@@ -4,9 +4,9 @@
 #include "CustomerRepository.h"
 #include "CustomerService.h"
 #include "CustomerManager.h"
-#include "../../database/include/ConnectionPool.h"
-#include "../../database/include/IConnectionPool.h"
-#include "../../common/include/appconfig.h"
+#include "ConnectionPool.h"
+#include "IConnectionPool.h"
+#include "appconfig.h"
 
 int main_demo()
 {
