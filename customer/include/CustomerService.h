@@ -15,6 +15,8 @@ namespace Banking
         bool createCustomer(const Customer& customer);
         bool updateCustomer(const Customer& customer);
         bool deleteCustomer(Banking::Types::CUSTOMER_ID id);
+        std::optional<Customer> getCustomerById(Banking::Types::CUSTOMER_ID id);
+        std::vector<Customer> findCustomersByName(const std::string& name);
 
         bool validateEmail(const std::string& email) const;
         bool validatePhone(const std::string& phone) const;

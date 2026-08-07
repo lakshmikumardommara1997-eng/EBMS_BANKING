@@ -14,6 +14,8 @@ namespace Banking
         bool registerCustomer(const Customer& customer);
         bool modifyCustomer(const Customer& customer);
         bool removeCustomer(Banking::Types::CUSTOMER_ID id);
+        std::optional<Customer> getCustomerById(Banking::Types::CUSTOMER_ID id);
+       
 
     private:
         std::shared_ptr<CustomerService> m_service;

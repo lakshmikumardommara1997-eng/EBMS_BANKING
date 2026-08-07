@@ -26,4 +26,9 @@ namespace Banking
         // Potential business checks before deletion can be placed here
         return m_service->deleteCustomer(id);
     }
+    std::optional<Customer> CustomerManager::getCustomerById(Banking::Types::CUSTOMER_ID id)
+    {
+        return m_service->getCustomerById(id);
+    }
 }
+       

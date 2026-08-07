@@ -62,4 +62,13 @@ namespace Banking
     {
         return m_repo->removeCustomer(id);
     }
+    std::optional<Customer> CustomerService::getCustomerById(Banking::Types::CUSTOMER_ID id)
+    {
+        return m_repo->getCustomerById(id);
+    }
+
+    std::vector<Customer> CustomerService::findCustomersByName(const std::string& name)
+    {
+        return m_repo->findCustomersByName(name);
+    }
 }

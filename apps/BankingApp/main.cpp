@@ -132,6 +132,15 @@ int main()
     {
         logger.error("Failed to register customer: " + newcustomer.toString(), __FILE__, __LINE__, __FUNCTION__);
     }
+    auto retrievedCustomer = customerManager.getCustomerById(10001);
+    if(retrievedCustomer.has_value())
+    {
+        logger.info("Retrieved customer: " + retrievedCustomer->toString(), __FILE__, __LINE__, __FUNCTION__);
+    }
+    else
+    {
+        logger.error("Failed to retrieve customer with ID: 10001", __FILE__, __LINE__, __FUNCTION__);
+    }
     connectionPool->shutdown();
     logger.info("Banking Application finished", __FILE__, __LINE__, __FUNCTION__);
     return 0;
